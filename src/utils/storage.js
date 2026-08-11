@@ -1,7 +1,7 @@
 import { DEFAULT_QUESTS } from '../data/defaultQuests';
 import { getTitleForLevel } from './levelEngine';
 
-const STORAGE_KEY = 'AWAKEN_SYSTEM_DATA_V3';
+const STORAGE_KEY = 'AWAKEN_SYSTEM_DATA_LOUD_V1';
 
 export const getTodayKey = () => {
   const now = new Date();
@@ -13,6 +13,11 @@ export const getTodayKey = () => {
 
 export const getInitialData = () => {
   try {
+    // Clear old legacy test keys from previous versions
+    localStorage.removeItem('AWAKEN_SYSTEM_DATA_V1');
+    localStorage.removeItem('AWAKEN_SYSTEM_DATA_V2');
+    localStorage.removeItem('AWAKEN_SYSTEM_DATA_V3');
+
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return getDefaultState();
     
@@ -59,7 +64,7 @@ export const getDefaultState = () => {
     completedQuestIds: [],
     playerLevel: 1,
     currentXp: 0,
-    playerTitle: getTitleForLevel(1),
+    playerTitle: getTitleForLevel(1), // "Recruta do Sistema"
   };
 };
 

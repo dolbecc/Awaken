@@ -152,12 +152,15 @@ export default function App() {
   };
 
   const handleResetDefaults = () => {
-    if (window.confirm('Restaurar as 11 missões padrão?')) {
+    if (window.confirm('Restaurar as 11 missões padrão e resetar progresso para o Nível 1?')) {
       setAppState(prev => ({
         ...prev,
         quests: DEFAULT_QUESTS,
         completedQuestIds: [],
         clockInTime: null,
+        playerLevel: 1,
+        currentXp: 0,
+        playerTitle: getTitleForLevel(1),
       }));
     }
   };
