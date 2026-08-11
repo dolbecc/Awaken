@@ -1,0 +1,114 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: #08090d;
+    background-image: 
+      radial-gradient(circle at 50% 0%, rgba(168, 85, 247, 0.12) 0%, transparent 60%),
+      radial-gradient(circle at 10% 40%, rgba(0, 255, 157, 0.06) 0%, transparent 50%),
+      radial-gradient(circle at 90% 80%, rgba(0, 240, 255, 0.05) 0%, transparent 50%);
+    background-attachment: fixed;
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+}
+
+/* Cyberpunk Holographic Grid */
+.cyber-grid {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #08090d;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1f293d;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00ff9d;
+}
+
+/* Neon Text Glows */
+.neon-text-green {
+  color: #00ff9d;
+  text-shadow: 0 0 8px rgba(0, 255, 157, 0.6), 0 0 20px rgba(0, 255, 157, 0.3);
+}
+
+.neon-text-purple {
+  color: #c084fc;
+  text-shadow: 0 0 8px rgba(168, 85, 247, 0.6), 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+.neon-text-cyan {
+  color: #00f0ff;
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.6), 0 0 20px rgba(0, 240, 255, 0.3);
+}
+
+/* Cyberpunk Borders */
+.cyber-border-green {
+  border-color: #00ff9d;
+  box-shadow: 0 0 15px rgba(0, 255, 157, 0.3), inset 0 0 10px rgba(0, 255, 157, 0.1);
+}
+
+.cyber-border-purple {
+  border-color: #a855f7;
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.3), inset 0 0 10px rgba(168, 85, 247, 0.1);
+}
+
+/* Retro Scanline effect */
+.scanlines {
+  position: relative;
+}
+
+.scanlines::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 4px;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Pixel loading bar pattern */
+.pixel-bar-bg {
+  background: repeating-linear-gradient(
+    90deg,
+    #00ff9d 0px,
+    #00ff9d 8px,
+    #08090d 8px,
+    #08090d 12px
+  );
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 15px rgba(0, 255, 157, 0.4), inset 0 0 15px rgba(0, 255, 157, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(0, 255, 157, 0.8), inset 0 0 20px rgba(0, 255, 157, 0.4);
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s infinite ease-in-out;
+}
