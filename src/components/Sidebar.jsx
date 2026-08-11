@@ -2,14 +2,13 @@ import React from 'react';
 import {
   Swords,
   BookOpen,
-  Scroll,
-  Terminal,
   Flame,
   CheckCircle2,
   Clock,
   Zap,
 } from 'lucide-react';
 import { AwakenFramedIcon } from './AwakenLogo';
+import { ClassAvatar } from '../utils/classAvatars';
 import { formatMinutesToDisplay } from '../utils/timeEngine';
 import { getTitleForLevel } from '../utils/levelEngine';
 import { soundFx } from '../utils/soundFx';
@@ -45,11 +44,17 @@ export const Sidebar = ({
           </div>
         </div>
 
-        {/* Profile / Hunter Identity Card */}
-        <div className="p-3.5 bg-[#121212] border border-[#222222] rounded-xl flex items-center gap-3">
-          {/* Avatar with Initials "IV" */}
-          <div className="w-11 h-11 rounded-lg bg-[#1A1A1A] border border-[#00FF11]/40 flex items-center justify-center text-[#00FF11] font-black text-sm tracking-wider shadow-loud-glow-sm flex-shrink-0">
-            IV
+        {/* Profile / Hunter Identity Card with Class Portrait Avatar */}
+        <div className="p-3 bg-[#121212] border border-[#222222] rounded-xl flex items-center gap-3 group hover:border-[#00FF11]/40 transition-colors">
+          {/* Evolutive Class Portrait Avatar */}
+          <div className="relative flex-shrink-0">
+            <ClassAvatar
+              level={playerLevel}
+              className="w-12 h-12 border border-[#00FF11]/40 shadow-loud-glow-sm"
+            />
+            <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-[#000000] border border-[#00FF11] rounded-full flex items-center justify-center">
+              <div className="w-1.5 h-1.5 rounded-full bg-[#00FF11] animate-pulse"></div>
+            </div>
           </div>
 
           <div className="min-w-0 flex-1">
@@ -57,9 +62,8 @@ export const Sidebar = ({
               <span className="text-xs font-bold text-white truncate">
                 Ian Victor
               </span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#00FF11] animate-pulse"></span>
             </div>
-            <div className="text-[11px] font-mono text-[#00FF11] font-semibold truncate">
+            <div className="text-[11px] font-mono text-[#00FF11] font-bold truncate mt-0.5">
               {playerTitle}
             </div>
             <div className="text-[10px] font-mono text-[#A0A0A0]">
