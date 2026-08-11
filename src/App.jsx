@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { SplashScreen } from './components/SplashScreen';
 import { Header } from './components/Header';
 import { LevelBar } from './components/LevelBar';
+import { Sidebar } from './components/Sidebar';
+import { PersistentEmbers } from './components/PersistentEmbers';
 import { CommandCenter } from './components/CommandCenter';
 import { QuestList } from './components/QuestList';
 import { QuestModal } from './components/QuestModal';
@@ -166,66 +168,86 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] text-white flex flex-col selection:bg-[#00FF11] selection:text-black">
+    <div className="min-h-screen bg-[#000000] text-white flex flex-col selection:bg-[#00FF11] selection:text-black relative overflow-x-hidden">
       
+      {/* Persistent Green Embers Canvas (Continuous Background FX) */}
+      <PersistentEmbers />
+
       {/* Intro Splash Screen */}
       {showIntro && (
         <SplashScreen onFinish={() => setShowIntro(false)} />
       )}
 
-      {/* Ultra Clean Header with Logo 4 */}
-      <Header />
-
-      {/* Minimalist Single-Line Level & XP Bar */}
-      <LevelBar
-        level={appState.playerLevel || 1}
-        currentXp={appState.currentXp || 0}
-        isLeveledUpFlash={isLeveledUpFlash}
+      {/* Left Sidebar (Fixed for Desktop) */}
+      <Sidebar
+        playerLevel={appState.playerLevel || 1}
+        completedCount={appState.completedQuestIds.length}
+        totalCount={appState.quests.length}
+        totalFocusedMinutes={scheduleData.totalMinutes}
+        streak={3}
       />
 
-      {/* Main Content Area */}
-      <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 flex flex-col gap-8">
+      {/* Main App Content Area (Padded on Left to Accommodate Sidebar) */}
+      <div className="flex-1 flex flex-col lg:pl-64 z-10 min-h-screen">
         
-        {/* Command Center: Bater Ponto & Active Task Hero */}
-        <CommandCenter
-          isClockedIn={!!appState.clockInTime}
-          clockInTime={appState.clockInTime}
-          estimatedEndTime={scheduleData.estimatedEndTime}
-          activeQuest={activeInfo.activeQuest}
-          remainingSeconds={activeInfo.remainingSeconds}
-          isOvertime={activeInfo.isOvertime}
-          isAllDone={isAllDone}
-          onClockIn={handleClockIn}
-          onCompleteActiveQuest={handleCompleteActiveQuest}
-          onRecalculateNow={handleRecalculateNow}
-        />
+        {/* Fixed / Sticky Top HUD (Header + LevelBar with Backdrop Blur) */}
+        <div className="sticky top-0 z-30 bg-[#000000]/95 backdrop-blur-md border-b border-[#1A1A1A] shadow-md">
+          {/* Header */}
+          <Header />
 
-        {/* Daily Quests List */}
-        <QuestList
-          quests={scheduleData.scheduledQuests}
-          completedQuestIds={appState.completedQuestIds}
-          activeQuestId={activeInfo.activeQuest ? activeInfo.activeQuest.id : null}
-          isClockedIn={!!appState.clockInTime}
-          remainingSeconds={activeInfo.remainingSeconds}
-          onToggleComplete={handleToggleComplete}
-          onEditQuest={(quest) => {
-            setEditingQuest(quest);
-            setIsModalOpen(true);
-          }}
-          onDeleteQuest={handleDeleteQuest}
-          onOpenNewQuestModal={() => {
-            setEditingQuest(null);
-            setIsModalOpen(true);
-          }}
-          onResetDefaults={handleResetDefaults}
-        />
+          {/* Minimalist Level & XP Progress Bar */}
+          <LevelBar
+            level={appState.playerLevel || 1}
+            currentXp={appState.currentXp || 0}
+            isLeveledUpFlash={isLeveledUpFlash}
+          />
+        </div>
 
-      </main>
+        {/* Content Container */}
+        <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 flex flex-col gap-8">
+          
+          {/* Command Center: Bater Ponto & Active Task Hero */}
+          <CommandCenter
+            isClockedIn={!!appState.clockInTime}
+            clockInTime={appState.clockInTime}
+            estimatedEndTime={scheduleData.estimatedEndTime}
+            activeQuest={activeInfo.activeQuest}
+            remainingSeconds={activeInfo.remainingSeconds}
+            isOvertime={activeInfo.isOvertime}
+            isAllDone={isAllDone}
+            onClockIn={handleClockIn}
+            onCompleteActiveQuest={handleCompleteActiveQuest}
+            onRecalculateNow={handleRecalculateNow}
+          />
 
-      {/* Minimal Footer */}
-      <footer className="w-full border-t border-[#1A1A1A] py-6 px-4 text-center font-mono text-xs text-[#A0A0A0]">
-        <span className="text-[#00FF11] font-bold">AWAKEN</span> • WAKE UP, BUILD, REPEAT.
-      </footer>
+          {/* Daily Quests List */}
+          <QuestList
+            quests={scheduleData.scheduledQuests}
+            completedQuestIds={appState.completedQuestIds}
+            activeQuestId={activeInfo.activeQuest ? activeInfo.activeQuest.id : null}
+            isClockedIn={!!appState.clockInTime}
+            remainingSeconds={activeInfo.remainingSeconds}
+            onToggleComplete={handleToggleComplete}
+            onEditQuest={(quest) => {
+              setEditingQuest(quest);
+              setIsModalOpen(true);
+            }}
+            onDeleteQuest={handleDeleteQuest}
+            onOpenNewQuestModal={() => {
+              setEditingQuest(null);
+              setIsModalOpen(true);
+            }}
+            onResetDefaults={handleResetDefaults}
+          />
+
+        </main>
+
+        {/* Minimal Footer */}
+        <footer className="w-full border-t border-[#1A1A1A] py-6 px-4 text-center font-mono text-xs text-[#A0A0A0] bg-[#000000]">
+          <span className="text-[#00FF11] font-bold">AWAKEN</span> • WAKE UP, BUILD, REPEAT.
+        </footer>
+
+      </div>
 
       {/* CRUD Quest Modal */}
       <QuestModal
