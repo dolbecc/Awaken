@@ -1,13 +1,23 @@
-// Awaken Leveling & XP Engine
+// Awaken Leveling & XP Engine (Balanced Pacing)
 
+/**
+ * Balanced XP Formula: 1 minute of focused routine = 1 XP
+ * (e.g. 30 min = +30 XP, 90 min = +90 XP, 120 min = +120 XP)
+ */
 export const getXpForQuest = (durationInMinutes) => {
   const duration = Number(durationInMinutes) || 0;
-  return duration * 10;
+  return Math.max(5, Math.round(duration * 1));
 };
 
+/**
+ * Evolutive level curve:
+ * Level 1: 500 XP (~1 full day of focus)
+ * Level 2: 1000 XP (~2 days)
+ * Level 3: 1500 XP (~3 days)
+ */
 export const getXpRequiredForLevel = (level) => {
   const lvl = Math.max(1, Number(level) || 1);
-  return lvl * 1000;
+  return lvl * 500;
 };
 
 export const getTitleForLevel = (level) => {
