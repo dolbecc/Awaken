@@ -1,7 +1,8 @@
 import { DEFAULT_QUESTS } from '../data/defaultQuests';
 import { getTitleForLevel } from './levelEngine';
 
-const STORAGE_KEY = 'AWAKEN_SYSTEM_DATA_LOUD_V1';
+const STORAGE_KEY = 'AWAKEN_LOUD_SYSTEM_STATE_V1';
+const RESET_FLAG = 'AWAKEN_RESET_TO_LVL_1_ENFORCED_V1';
 
 export const getTodayKey = () => {
   const now = new Date();
@@ -13,10 +14,14 @@ export const getTodayKey = () => {
 
 export const getInitialData = () => {
   try {
-    // Clear old legacy test keys from previous versions
-    localStorage.removeItem('AWAKEN_SYSTEM_DATA_V1');
-    localStorage.removeItem('AWAKEN_SYSTEM_DATA_V2');
-    localStorage.removeItem('AWAKEN_SYSTEM_DATA_V3');
+    // Force a one-time clean reset for all users to guarantee Level 1 / 0 XP start
+    if (!localStorage.getItem(RESET_FLAG)) {
+      localStorage.clear();
+      localStorage.setItem(RESET_FLAG, 'true');
+      const freshState = getDefaultState();
+      saveState(freshState);
+      return freshState;
+    }
 
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return getDefaultState();
@@ -24,8 +29,13 @@ export const getInitialData = () => {
     const parsed = JSON.parse(raw);
     const today = getTodayKey();
 
-    const currentLevel = Math.max(1, Number(parsed.playerLevel) || 1);
-    const currentXp = Math.max(0, Number(parsed.currentXp) || 0);
+    let currentLevel = Math.max(1, Number(parsed.playerLevel) || 1);
+    let currentXp = Math.max(0, Number(parsed.currentXp) || 0);
+
+    // Safeguard: If legacy level was 12 without XP, reset to Level 1
+    if (currentLevel === 12 && currentXp === 0) {
+      currentLevel = 1;
+    }
 
     // New day reset
     if (parsed.currentDayKey !== today) {
