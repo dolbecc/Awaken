@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { SplashScreen } from './components/SplashScreen';
 import { Header } from './components/Header';
+import { LevelBar } from './components/LevelBar';
 import { CommandCenter } from './components/CommandCenter';
 import { QuestList } from './components/QuestList';
 import { QuestModal } from './components/QuestModal';
 import { DEFAULT_QUESTS } from './data/defaultQuests';
 import { getInitialData, saveState } from './utils/storage';
 import { calculateSchedule, getActiveQuestInfo } from './utils/timeEngine';
+import { getXpForQuest, processXpGain, processXpLoss, getTitleForLevel } from './utils/levelEngine';
 import { soundFx } from './utils/soundFx';
 
 export default function App() {
@@ -15,6 +17,7 @@ export default function App() {
   const [nowMs, setNowMs] = useState(Date.now());
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingQuest, setEditingQuest] = useState(null);
+  const [isLeveledUpFlash, setIsLeveledUpFlash] = useState(false);
 
   // Auto-save to LocalStorage
   useEffect(() => {
@@ -68,17 +71,49 @@ export default function App() {
     }));
   };
 
-  // Toggle Quest Completion
+  // Toggle Quest Completion with XP & Level Processing
   const handleToggleComplete = (questId) => {
     setAppState(prev => {
       const isAlreadyCompleted = prev.completedQuestIds.includes(questId);
-      const updatedCompleted = isAlreadyCompleted
-        ? prev.completedQuestIds.filter(id => id !== questId)
-        : [...prev.completedQuestIds, questId];
+      const quest = prev.quests.find(q => q.id === questId);
+      const questDuration = quest ? quest.duration : 0;
+      const xpValue = getXpForQuest(questDuration);
+
+      let updatedCompleted = [];
+      let newLevel = prev.playerLevel || 1;
+      let newXp = prev.currentXp || 0;
+      let newTitle = prev.playerTitle || getTitleForLevel(newLevel);
+
+      if (isAlreadyCompleted) {
+        // Uncompleting quest: subtract XP safely
+        updatedCompleted = prev.completedQuestIds.filter(id => id !== questId);
+        const result = processXpLoss(newLevel, newXp, xpValue);
+        newLevel = result.level;
+        newXp = result.xp;
+        newTitle = result.title;
+      } else {
+        // Completing quest: add XP and evaluate level ups
+        updatedCompleted = [...prev.completedQuestIds, questId];
+        const result = processXpGain(newLevel, newXp, xpValue);
+        newLevel = result.level;
+        newXp = result.xp;
+        newTitle = result.title;
+
+        if (result.didLevelUp) {
+          soundFx.playLevelUp();
+          setIsLeveledUpFlash(true);
+          setTimeout(() => {
+            setIsLeveledUpFlash(false);
+          }, 1500);
+        }
+      }
 
       return {
         ...prev,
         completedQuestIds: updatedCompleted,
+        playerLevel: newLevel,
+        currentXp: newXp,
+        playerTitle: newTitle,
       };
     });
   };
@@ -135,8 +170,15 @@ export default function App() {
         <SplashScreen onFinish={() => setShowIntro(false)} />
       )}
 
-      {/* Ultra Clean Header */}
+      {/* Ultra Clean Header with Logo 4 */}
       <Header />
+
+      {/* Minimalist Single-Line Level & XP Bar */}
+      <LevelBar
+        level={appState.playerLevel || 1}
+        currentXp={appState.currentXp || 0}
+        isLeveledUpFlash={isLeveledUpFlash}
+      />
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-4xl w-full mx-auto px-4 sm:px-6 py-8 flex flex-col gap-8">

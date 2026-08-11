@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Play, Check, RotateCcw, Clock, ArrowRight } from 'lucide-react';
 import { formatTime, formatSecondsToMMSS, formatMinutesToDisplay } from '../utils/timeEngine';
+import { getXpForQuest } from '../utils/levelEngine';
 import { soundFx } from '../utils/soundFx';
 
 export const CommandCenter = ({
@@ -108,6 +109,8 @@ export const CommandCenter = ({
     );
   }
 
+  const activeQuestXp = activeQuest ? getXpForQuest(activeQuest.duration) : 0;
+
   // State 3: System Running with Active Quest
   return (
     <div className="w-full bg-[#1A1A1A] border border-[#00FF11] rounded-xl p-6 sm:p-8 shadow-loud-glow-sm flex flex-col gap-6">
@@ -160,7 +163,7 @@ export const CommandCenter = ({
                 className="flex-1 sm:flex-initial px-6 py-3 bg-[#00FF11] hover:bg-[#00CC0E] text-black font-black text-xs sm:text-sm uppercase tracking-wider rounded-lg shadow-loud-button transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Check className="w-4 h-4 stroke-[3]" />
-                <span>CONCLUIR MISSÃO</span>
+                <span>CONCLUIR MISSÃO (+{activeQuestXp} XP)</span>
               </button>
 
               <button

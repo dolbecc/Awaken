@@ -1,6 +1,7 @@
 import React from 'react';
-import { Check, Edit3, Trash2, Clock } from 'lucide-react';
+import { Check, Edit3, Trash2 } from 'lucide-react';
 import { formatMinutesToDisplay, formatSecondsToMMSS } from '../utils/timeEngine';
+import { getXpForQuest } from '../utils/levelEngine';
 import { soundFx } from '../utils/soundFx';
 
 export const QuestCard = ({
@@ -14,6 +15,8 @@ export const QuestCard = ({
   onEdit,
   onDelete,
 }) => {
+  const questXp = getXpForQuest(quest.duration);
+
   const handleToggle = () => {
     if (!isCompleted) {
       soundFx.playQuestComplete();
@@ -38,7 +41,7 @@ export const QuestCard = ({
         {/* LOUD Check Button */}
         <button
           onClick={handleToggle}
-          title={isCompleted ? "Marcar como pendente" : "Concluir missão"}
+          title={isCompleted ? "Marcar como pendente" : `Concluir missão (+${questXp} XP)`}
           className={`w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 transition-all cursor-pointer ${
             isCompleted
               ? 'bg-[#00FF11] text-black border border-[#00FF11]'
@@ -66,6 +69,9 @@ export const QuestCard = ({
                 CONCLUÍDA
               </span>
             )}
+            <span className="text-[10px] font-mono font-bold text-[#00FF11]/80">
+              +{questXp} XP
+            </span>
           </div>
 
           <h3
