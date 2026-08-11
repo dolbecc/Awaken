@@ -1,7 +1,7 @@
-// Awaken Leveling & XP Engine (Balanced Pacing)
+// Awaken Leveling & XP Engine (Hardcore RPG Curve)
 
 /**
- * Balanced XP Formula: 1 minute of focused routine = 1 XP
+ * 1 minute of focused routine = 1 XP
  * (e.g. 30 min = +30 XP, 90 min = +90 XP, 120 min = +120 XP)
  */
 export const getXpForQuest = (durationInMinutes) => {
@@ -10,14 +10,19 @@ export const getXpForQuest = (durationInMinutes) => {
 };
 
 /**
- * Evolutive level curve:
- * Level 1: 500 XP (~1 full day of focus)
- * Level 2: 1000 XP (~2 days)
- * Level 3: 1500 XP (~3 days)
+ * Hardcore RPG Level Curve:
+ * Nível 1: 2.500 XP (~3 dias de rotina completa sem falhas)
+ * Nível 2: 5.000 XP (~6 dias)
+ * Nível 3: 7.500 XP (~9 dias)
+ * Nível 5: 12.500 XP (~15 dias / Soldado em Ascensão)
+ * Nível 10: 25.000 XP (~1 mês / Guerreiro Focado)
+ * Nível 20: 50.000 XP (~2 meses / Cavaleiro Real)
+ * Nível 50: 125.000 XP (~5 meses / Caçador de Elite)
+ * Nível 100: 250.000 XP (~1 ano+ / Monarca)
  */
 export const getXpRequiredForLevel = (level) => {
   const lvl = Math.max(1, Number(level) || 1);
-  return lvl * 500;
+  return lvl * 2500;
 };
 
 export const getTitleForLevel = (level) => {
