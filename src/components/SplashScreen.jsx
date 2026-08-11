@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { AwakenFramedIcon } from './AwakenLogo';
 import { soundFx } from '../utils/soundFx';
 
 export const SplashScreen = ({ onFinish }) => {
@@ -62,7 +63,7 @@ export const SplashScreen = ({ onFinish }) => {
       <div className="w-full flex justify-between items-center text-xs font-mono text-[#A0A0A0]">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 bg-[#00FF11] rounded-full animate-pulse"></span>
-          <span>AWAKEN // LOUD_EDITION</span>
+          <span>AWAKEN // SYSTEM_ONLINE</span>
         </div>
         <button
           onClick={skipIntro}
@@ -72,14 +73,19 @@ export const SplashScreen = ({ onFinish }) => {
         </button>
       </div>
 
-      {/* Center Title & Subtitle */}
+      {/* Center Framed Logo & Title */}
       <div className="flex flex-col items-center justify-center text-center my-auto">
-        <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-black tracking-tighter uppercase text-[#00FF11] drop-shadow-[0_0_25px_rgba(0,255,17,0.7)]">
+        {/* Logo 4 Emoldurado */}
+        <div className="mb-6 transform hover:scale-105 transition-transform duration-300">
+          <AwakenFramedIcon className="w-24 h-24 sm:w-32 sm:h-32 drop-shadow-[0_0_30px_rgba(0,255,17,0.7)]" glow={true} />
+        </div>
+
+        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-wider uppercase text-[#00FF11] drop-shadow-[0_0_20px_rgba(0,255,17,0.6)]">
           AWAKEN
         </h1>
 
-        <p className="mt-4 text-base sm:text-2xl font-bold tracking-widest text-white uppercase">
-          Wake up, <span className="text-[#00FF11]">build</span>, repeat.
+        <p className="mt-3 text-sm sm:text-xl font-bold tracking-[0.25em] text-white uppercase">
+          WAKE UP. <span className="text-[#00FF11]">BUILD.</span> REPEAT.
         </p>
       </div>
 
@@ -91,7 +97,7 @@ export const SplashScreen = ({ onFinish }) => {
         </div>
 
         {/* Retro Pixel Progress Bar */}
-        <div className="w-full h-4 bg-[#1A1A1A] border border-[#2A2A2A] rounded p-0.5 overflow-hidden">
+        <div className="w-full h-3.5 bg-[#1A1A1A] border border-[#2A2A2A] rounded p-0.5 overflow-hidden">
           <div
             className="h-full bg-[#00FF11] shadow-[0_0_10px_rgba(0,255,17,0.8)] transition-all duration-75 ease-out"
             style={{ width: `${Math.min(100, progress)}%` }}
