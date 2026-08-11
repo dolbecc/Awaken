@@ -8,7 +8,7 @@ import { CommandCenter } from './components/CommandCenter';
 import { QuestList } from './components/QuestList';
 import { QuestModal } from './components/QuestModal';
 import { DEFAULT_QUESTS } from './data/defaultQuests';
-import { getInitialData, saveState } from './utils/storage';
+import { getInitialData, saveState, getTodayKey } from './utils/storage';
 import { calculateSchedule, getActiveQuestInfo } from './utils/timeEngine';
 import { getXpForQuest, processXpGain, processXpLoss, getTitleForLevel } from './utils/levelEngine';
 import { soundFx } from './utils/soundFx';
@@ -48,6 +48,13 @@ export default function App() {
     );
   }, [scheduleData.scheduledQuests, appState.completedQuestIds, nowMs]);
 
+  // Calculate real XP earned today
+  const todayEarnedXp = useMemo(() => {
+    return appState.quests
+      .filter(q => appState.completedQuestIds.includes(q.id))
+      .reduce((acc, q) => acc + getXpForQuest(q.duration), 0);
+  }, [appState.quests, appState.completedQuestIds]);
+
   const isAllDone = appState.quests.length > 0 && appState.completedQuestIds.length === appState.quests.length;
 
   // Clock-in handler
@@ -80,11 +87,14 @@ export default function App() {
       const quest = prev.quests.find(q => q.id === questId);
       const questDuration = quest ? quest.duration : 0;
       const xpValue = getXpForQuest(questDuration);
+      const today = getTodayKey();
 
       let updatedCompleted = [];
       let newLevel = prev.playerLevel || 1;
       let newXp = prev.currentXp || 0;
       let newTitle = prev.playerTitle || getTitleForLevel(newLevel);
+      let currentStreak = Math.max(0, Number(prev.streak) || 0);
+      let lastCompletedDay = prev.lastCompletedStreakDay;
 
       if (isAlreadyCompleted) {
         // Uncompleting quest: subtract XP safely
@@ -101,6 +111,14 @@ export default function App() {
         newXp = result.xp;
         newTitle = result.title;
 
+        // Check if all quests completed today to increment streak
+        if (updatedCompleted.length === prev.quests.length && prev.quests.length > 0) {
+          if (lastCompletedDay !== today) {
+            currentStreak += 1;
+            lastCompletedDay = today;
+          }
+        }
+
         if (result.didLevelUp) {
           soundFx.playLevelUp();
           setIsLeveledUpFlash(true);
@@ -115,6 +133,8 @@ export default function App() {
         completedQuestIds: updatedCompleted,
         playerLevel: newLevel,
         currentXp: newXp,
+        streak: currentStreak,
+        lastCompletedStreakDay: lastCompletedDay,
         playerTitle: newTitle,
       };
     });
@@ -162,6 +182,8 @@ export default function App() {
         clockInTime: null,
         playerLevel: 1,
         currentXp: 0,
+        streak: 0,
+        lastCompletedStreakDay: null,
         playerTitle: getTitleForLevel(1),
       }));
     }
@@ -184,7 +206,8 @@ export default function App() {
         completedCount={appState.completedQuestIds.length}
         totalCount={appState.quests.length}
         totalFocusedMinutes={scheduleData.totalMinutes}
-        streak={3}
+        todayEarnedXp={todayEarnedXp}
+        streak={appState.streak || 0}
       />
 
       {/* Main App Content Area (Padded on Left to Accommodate Sidebar) */}

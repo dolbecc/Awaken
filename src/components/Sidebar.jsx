@@ -7,10 +7,8 @@ import {
   Flame,
   CheckCircle2,
   Clock,
-  Target,
-  Shield,
   Zap,
-  Activity
+  Shield
 } from 'lucide-react';
 import { AwakenFramedIcon } from './AwakenLogo';
 import { formatMinutesToDisplay } from '../utils/timeEngine';
@@ -21,7 +19,8 @@ export const Sidebar = ({
   completedCount = 0,
   totalCount = 11,
   totalFocusedMinutes = 0,
-  streak = 3,
+  todayEarnedXp = 0,
+  streak = 0,
 }) => {
   const playerTitle = getTitleForLevel(playerLevel);
 
@@ -81,7 +80,7 @@ export const Sidebar = ({
                 Ofensiva
               </span>
               <span className="text-sm font-black text-white font-mono mt-0.5">
-                {streak} Dias
+                {streak} {streak === 1 ? 'Dia' : 'Dias'}
               </span>
             </div>
 
@@ -100,21 +99,21 @@ export const Sidebar = ({
             <div className="bg-[#121212] border border-[#1F1F1F] p-2.5 rounded-lg flex flex-col">
               <span className="text-[10px] font-mono text-[#A0A0A0] flex items-center gap-1">
                 <Clock className="w-3 h-3 text-[#00FF11]" />
-                Carga
+                Carga Total
               </span>
               <span className="text-xs font-bold text-white font-mono mt-0.5 truncate">
                 {formatMinutesToDisplay(totalFocusedMinutes)}
               </span>
             </div>
 
-            {/* Prospecções */}
+            {/* Real XP Today */}
             <div className="bg-[#121212] border border-[#1F1F1F] p-2.5 rounded-lg flex flex-col">
               <span className="text-[10px] font-mono text-[#A0A0A0] flex items-center gap-1">
-                <Target className="w-3 h-3 text-[#00FF11]" />
-                Prospecção
+                <Zap className="w-3 h-3 text-[#00FF11]" />
+                XP Hoje
               </span>
               <span className="text-sm font-black text-[#00FF11] font-mono mt-0.5">
-                8 Leads
+                +{todayEarnedXp} XP
               </span>
             </div>
           </div>
