@@ -1,18 +1,18 @@
 import React from 'react';
 import {
-  LayoutDashboard,
-  Scroll,
   Swords,
+  BookOpen,
+  Scroll,
   Terminal,
   Flame,
   CheckCircle2,
   Clock,
   Zap,
-  Shield
 } from 'lucide-react';
 import { AwakenFramedIcon } from './AwakenLogo';
 import { formatMinutesToDisplay } from '../utils/timeEngine';
 import { getTitleForLevel } from '../utils/levelEngine';
+import { soundFx } from '../utils/soundFx';
 
 export const Sidebar = ({
   playerLevel = 1,
@@ -21,6 +21,8 @@ export const Sidebar = ({
   totalFocusedMinutes = 0,
   todayEarnedXp = 0,
   streak = 0,
+  activeView = 'quests', // 'quests' | 'diary'
+  onViewChange,
 }) => {
   const playerTitle = getTitleForLevel(playerLevel);
 
@@ -119,30 +121,42 @@ export const Sidebar = ({
           </div>
         </div>
 
-        {/* Quick Navigation Commands */}
+        {/* Navigation / System Commands */}
         <div className="flex flex-col gap-1.5">
           <span className="text-[10px] font-mono font-bold text-[#A0A0A0] uppercase tracking-wider px-1 mb-1">
             COMANDOS DO SISTEMA
           </span>
 
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 bg-[#141414] border border-[#00FF11]/40 text-[#00FF11] rounded-lg text-xs font-bold font-mono text-left shadow-loud-glow-sm">
-            <LayoutDashboard className="w-4 h-4" />
-            <span>Dashboard</span>
-          </button>
-
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 bg-transparent hover:bg-[#141414] text-[#A0A0A0] hover:text-white rounded-lg text-xs font-medium font-mono text-left transition-colors">
-            <Scroll className="w-4 h-4" />
-            <span>Inventário de Scripts</span>
-          </button>
-
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 bg-transparent hover:bg-[#141414] text-[#A0A0A0] hover:text-white rounded-lg text-xs font-medium font-mono text-left transition-colors">
+          {/* Button 1: Quests Diárias */}
+          <button
+            onClick={() => {
+              soundFx.playClick();
+              onViewChange('quests');
+            }}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-bold font-mono text-left transition-all ${
+              activeView === 'quests'
+                ? 'bg-[#141414] border border-[#00FF11]/40 text-[#00FF11] shadow-loud-glow-sm'
+                : 'bg-transparent hover:bg-[#141414] text-[#A0A0A0] hover:text-white border border-transparent'
+            }`}
+          >
             <Swords className="w-4 h-4" />
-            <span>Histórico de Batalhas</span>
+            <span>Quests Diárias</span>
           </button>
 
-          <button className="w-full flex items-center gap-3 px-3 py-2.5 bg-transparent hover:bg-[#141414] text-[#A0A0A0] hover:text-white rounded-lg text-xs font-medium font-mono text-left transition-colors">
-            <Terminal className="w-4 h-4" />
-            <span>Protocolo Python</span>
+          {/* Button 2: Diário de Aulas */}
+          <button
+            onClick={() => {
+              soundFx.playClick();
+              onViewChange('diary');
+            }}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-bold font-mono text-left transition-all ${
+              activeView === 'diary'
+                ? 'bg-[#141414] border border-[#00FF11]/40 text-[#00FF11] shadow-loud-glow-sm'
+                : 'bg-transparent hover:bg-[#141414] text-[#A0A0A0] hover:text-white border border-transparent'
+            }`}
+          >
+            <BookOpen className="w-4 h-4" />
+            <span>Diário de Aulas</span>
           </button>
         </div>
 
